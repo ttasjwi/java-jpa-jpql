@@ -21,6 +21,11 @@ public class Member {
     @JoinColumn(name = "team_id")
     private Team team;
 
+    public void changeTeam(Team teamA) {
+        this.team = teamA;
+        teamA.getMembers().add(this);
+    }
+
     public Long getId() {
         return id;
     }
@@ -53,4 +58,6 @@ public class Member {
                 ", age=" + age +
                 '}';
     }
+
+
 }

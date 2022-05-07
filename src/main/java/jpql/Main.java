@@ -13,20 +13,18 @@ public class Main {
         tx.begin();
 
         try {
+            Team teamA = new Team();
+            teamA.setName("teamA");
+            em.persist(teamA);
 
-            for (int i = 1; i <= 100; i++) {
-                Member member = new Member();
-                member.setName("member" + i);
-                member.setAge(i);
-                em.persist(member);
-            }
-            List<Member> members = em.createQuery("SELECT m FROM Member as m ORDER BY m.age desc")
-                    .setFirstResult(10)
-                    .setMaxResults(10)
-                    .getResultList();
-            for (Member member : members) {
-                System.out.println(member);
-            }
+            Member memberA = new Member();
+            memberA.setName("teamA");
+            memberA.changeTeam(teamA);
+            em.persist(memberA);
+            
+            String jpql = "SELECT m FROM Member as m LEFT JOIN Team as t ON m.name = t.name";
+            List<Member> members = em.createQuery(jpql, Member.class).getResultList();
+            System.out.println("members.size() = " + members.size());
 
             tx.commit();
         } catch (Exception e) {
