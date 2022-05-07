@@ -13,29 +13,23 @@ public class Main {
         tx.begin();
 
         try {
-            Member member1 = new Member();
-            member1.setName("ttasjwi");
-            member1.setAge(10);
-            em.persist(member1);
 
-            Member member2 = new Member();
-            member2.setName("honux");
-            member2.setAge(20);
-            em.persist(member2);
-
-            em.flush();
-            em.clear();
-
-            String jpql = "SELECT new jpql.MemberDTO(m.name, m.age) FROM Member as m";
-            List<MemberDTO> memberDTOs = em.createQuery(jpql, MemberDTO.class)
+            for (int i = 1; i <= 100; i++) {
+                Member member = new Member();
+                member.setName("member" + i);
+                member.setAge(i);
+                em.persist(member);
+            }
+            List<Member> members = em.createQuery("SELECT m FROM Member as m ORDER BY m.age desc")
+                    .setFirstResult(10)
+                    .setMaxResults(10)
                     .getResultList();
-            for (MemberDTO memberDTO : memberDTOs) {
-                System.out.println("memberDTO.name = " + memberDTO.getName());
-                System.out.println("memberDTO.age = " + memberDTO.getAge());
+            for (Member member : members) {
+                System.out.println(member);
             }
 
             tx.commit();
-        } catch(Exception e) {
+        } catch (Exception e) {
             tx.rollback();
         } finally {
             em.close();
