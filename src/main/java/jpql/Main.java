@@ -18,12 +18,15 @@ public class Main {
             member.setAge(10);
             em.persist(member);
 
-            String jpql = "SELECT m FROM Member as m";
-            TypedQuery<Member> query = em.createQuery(jpql, Member.class);
-            List<Member> findMembers = query.getResultList();
-            for (Member findMember : findMembers) {
-                System.out.println("findMember = " + findMember.getName());
-            }
+            em.flush();
+            em.clear();
+
+            String jpql = "SELECT m FROM Member as m WHERE m.name = :memberName";
+            Member findMember = em.createQuery(jpql, Member.class)
+                    .setParameter("memberName", member.getName())
+                    .getSingleResult();
+
+            System.out.println("findMember.getName() = " + findMember.getName());
 
             tx.commit();
         } catch(Exception e) {
