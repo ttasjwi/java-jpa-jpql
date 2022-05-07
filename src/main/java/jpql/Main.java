@@ -1,9 +1,7 @@
 package jpql;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
+import java.util.List;
 
 public class Main {
 
@@ -17,7 +15,15 @@ public class Main {
         try {
             Member member = new Member();
             member.setName("ttasjwi");
+            member.setAge(10);
             em.persist(member);
+
+            String jpql = "SELECT m FROM Member as m";
+            TypedQuery<Member> query = em.createQuery(jpql, Member.class);
+            List<Member> findMembers = query.getResultList();
+            for (Member findMember : findMembers) {
+                System.out.println("findMember = " + findMember.getName());
+            }
 
             tx.commit();
         } catch(Exception e) {
