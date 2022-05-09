@@ -16,19 +16,27 @@ public class Main {
         tx.begin();
 
         try {
-            Product p1 = new Book();
-            p1.setName("Book1");
-            em.persist(p1);
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
 
-            Product p2 = new Book();
-            p2.setName("Book2");
-            em.persist(p2);
+            Member memberA = new Member();
+            memberA.setName("memberA");
+            memberA.changeTeam(team);
+            em.persist(memberA);
 
-            String result = em.createQuery("SELECT function('group_concat', p.name) FROM Product as p", String.class)
-                    .getSingleResult();
+            Member memberB = new Member();
+            memberB.setName("memberB");
+            memberB.changeTeam(team);
+            em.persist(memberB);
 
-            System.out.println("result = "+result);
-            tx.commit();
+            List<String> names = em.createQuery("SELECT m.name From Team as t JOIN t.members as m", String.class)
+                    .getResultList();
+
+            for (String name : names) {
+                System.out.println("memberName = "+name);
+            }
+
         } catch (Exception e) {
             tx.rollback();
         } finally {
