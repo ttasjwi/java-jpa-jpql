@@ -13,18 +13,25 @@ public class Main {
         tx.begin();
 
         try {
-            Team teamA = new Team();
-            teamA.setName("teamA");
-            em.persist(teamA);
+            Member member = new Member();
+            member.setName("ttasjwi");
+            member.setMemberType(MemberType.ADMIN);
+            em.persist(member);
 
-            Member memberA = new Member();
-            memberA.setName("teamA");
-            memberA.changeTeam(teamA);
-            em.persist(memberA);
-            
-            String jpql = "SELECT m FROM Member as m LEFT JOIN Team as t ON m.name = t.name";
-            List<Member> members = em.createQuery(jpql, Member.class).getResultList();
+            Book book = new Book();
+            book.setName("토끼책");
+            book.setAuthor("조영호");
+            book.setPrice(30000);
+            em.persist(book);
+
+            List<Member> members = em.createQuery("SELECT m FROM Member as m Where m.memberType = :memberType", Member.class)
+                    .setParameter("memberType", MemberType.ADMIN)
+                    .getResultList();
             System.out.println("members.size() = " + members.size());
+
+            List<Product> products = em.createQuery("SELECT p from Product as p Where type(p) = Book", Product.class)
+                    .getResultList();
+            System.out.println("products.size() = "+ products.size());
 
             tx.commit();
         } catch (Exception e) {

@@ -4,7 +4,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "product")
-public class Product {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn
+public abstract class Product {
 
     @Id @GeneratedValue
     @Column(name = "product_id")
