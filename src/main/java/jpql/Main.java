@@ -16,38 +16,18 @@ public class Main {
         tx.begin();
 
         try {
-            Member memberA = new Member();
-            memberA.setName(null);
-            memberA.setAge(20);
-            em.persist(memberA);
+            Product p1 = new Book();
+            p1.setName("Book1");
+            em.persist(p1);
 
-            String memberNameA = em.createQuery("SELECT coalesce(m.name, '이름 없는 회원') from Member as m", String.class)
+            Product p2 = new Book();
+            p2.setName("Book2");
+            em.persist(p2);
+
+            String result = em.createQuery("SELECT function('group_concat', p.name) FROM Product as p", String.class)
                     .getSingleResult();
 
-            System.out.println("memberNameA = "+memberNameA);
-
-            Member memberB = new Member();
-            memberB.setName("관리자");
-            memberB.setAge(70);
-            em.persist(memberB);
-
-            String memberNameB = em.createQuery("SELECT nullif(m.name, '관리자') from Member as m", String.class)
-                    .getSingleResult();
-            System.out.println("memberNameB = "+memberNameB);
-
-            List<String> ageResults = em.createQuery(
-                    "SELECT "+
-                            "case " +
-                                "when m.age <= 10 then '학생요금' "+
-                                "when m.age >= 60 then '경로요금' "+
-                                "else '일반요금' "+
-                            "end "+
-                        "FROM Member as m"
-                    , String.class).getResultList();
-
-            System.out.println("memberA age : "+ageResults.get(0));
-            System.out.println("memberB age : "+ageResults.get(1));
-
+            System.out.println("result = "+result);
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
