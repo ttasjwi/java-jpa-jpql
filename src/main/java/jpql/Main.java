@@ -16,27 +16,41 @@ public class Main {
         tx.begin();
 
         try {
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
+            Team teamA = new Team();
+            teamA.setName("teamA");
+            em.persist(teamA);
+
+            Team teamB = new Team();
+            teamB.setName("teamB");
+            em.persist(teamB);
 
             Member memberA = new Member();
             memberA.setName("memberA");
-            memberA.changeTeam(team);
+            memberA.changeTeam(teamA);
             em.persist(memberA);
 
             Member memberB = new Member();
             memberB.setName("memberB");
-            memberB.changeTeam(team);
+            memberB.changeTeam(teamA);
             em.persist(memberB);
 
-            List<String> names = em.createQuery("SELECT m.name From Team as t JOIN t.members as m", String.class)
-                    .getResultList();
+            Member memberC = new Member();
+            memberC.setName("memberC");
+            memberC.changeTeam(teamB);
+            em.persist(memberC);
 
-            for (String name : names) {
-                System.out.println("memberName = "+name);
+            Member memberD = new Member();
+            memberD.setName("memberD");
+            em.persist(memberD);
+
+            String jpql = "SELECT m FROM Member as m join fetch m.team";
+
+            List<Member> members = em.createQuery(jpql, Member.class).getResultList();
+            for (Member member : members) {
+                System.out.println("member.team.name = "+member.getTeam().getName());
             }
 
+            tx.commit();
         } catch (Exception e) {
             tx.rollback();
         } finally {
