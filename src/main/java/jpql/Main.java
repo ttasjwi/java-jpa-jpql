@@ -43,11 +43,22 @@ public class Main {
             memberD.setName("memberD");
             em.persist(memberD);
 
-            String jpql = "SELECT m FROM Member as m join fetch m.team";
+            em.flush();
+            em.clear();
 
-            List<Member> members = em.createQuery(jpql, Member.class).getResultList();
-            for (Member member : members) {
-                System.out.println("member.team.name = "+member.getTeam().getName());
+            String jpql = "SELECT t FROM Team as t";
+
+            List<Team> teams = em.createQuery(jpql, Team.class)
+                    .setFirstResult(0)
+                    .setMaxResults(2)
+                    .getResultList();
+
+            for (Team team : teams) {
+                List<Member> members = team.getMembers();
+                System.out.printf("team = %s | team.members.size = %d\n",team.getName(), members.size());
+                for (Member member : members) {
+                    System.out.printf("--------> member = %s\n",member.getName());
+                }
             }
 
             tx.commit();
