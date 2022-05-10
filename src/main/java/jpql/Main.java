@@ -4,7 +4,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.util.List;
 
 public class Main {
 
@@ -16,53 +15,27 @@ public class Main {
         tx.begin();
 
         try {
-            Team teamA = new Team();
-            teamA.setName("teamA");
-            em.persist(teamA);
-
-            Team teamB = new Team();
-            teamB.setName("teamB");
-            em.persist(teamB);
-
-            Member memberA = new Member();
-            memberA.setName("memberA");
-            memberA.changeTeam(teamA);
-            em.persist(memberA);
-
-            Member memberB = new Member();
-            memberB.setName("memberB");
-            memberB.changeTeam(teamA);
-            em.persist(memberB);
-
-            Member memberC = new Member();
-            memberC.setName("memberC");
-            memberC.changeTeam(teamB);
-            em.persist(memberC);
-
-            Member memberD = new Member();
-            memberD.setName("memberD");
-            em.persist(memberD);
+            Book book = new Book();
+            book.setName("자바 ORM 표준 JPA 프로그래밍");
+            book.setAuthor("kim");
+            book.setPrice(10000);
+            book.setStockAmount(10000);
+            book.setIsbn("9788960777330");
+            em.persist(book);
 
             em.flush();
             em.clear();
 
-            String jpql = "SELECT t FROM Team as t";
+            Product findProduct =
+                    em.createQuery("SELECT p From Product as p " +
+                                    "WHERE treat(p as Book).author = 'kim'", Product.class)
+                    .getSingleResult();
 
-            List<Team> teams = em.createQuery(jpql, Team.class)
-                    .setFirstResult(0)
-                    .setMaxResults(2)
-                    .getResultList();
-
-            for (Team team : teams) {
-                List<Member> members = team.getMembers();
-                System.out.printf("team = %s | team.members.size = %d\n",team.getName(), members.size());
-                for (Member member : members) {
-                    System.out.printf("--------> member = %s\n",member.getName());
-                }
-            }
+            System.out.println("findProduct= "+findProduct);
 
             tx.commit();
         } catch (Exception e) {
+            e.printStackTrace();
             tx.rollback();
         } finally {
             em.close();
