@@ -26,4 +26,11 @@ public class Book extends Product {
         this.isbn = isbn;
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+                "id='%d', name='%s', author='%s', price='%d', stockAmount='%d', author='%s', isbn='%s'"
+                , getId(), getName(), getAuthor(), getPrice(), getStockAmount(), getAuthor(), getIsbn()
+        );
+    }
 }

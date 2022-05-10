@@ -43,6 +43,9 @@ public class Main {
             memberD.setName("memberD");
             em.persist(memberD);
 
+            em.flush();
+            em.clear();
+
             String jpql = "SELECT distinct t FROM Team as t join fetch t.members";
 
             List<Team> teams = em.createQuery(jpql, Team.class).getResultList();
@@ -57,6 +60,7 @@ public class Main {
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
+            e.printStackTrace();
         } finally {
             em.close();
         }
