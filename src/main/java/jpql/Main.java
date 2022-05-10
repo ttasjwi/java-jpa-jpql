@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.List;
 
 public class Main {
 
@@ -42,14 +43,17 @@ public class Main {
             memberD.setName("memberD");
             em.persist(memberD);
 
-            em.flush();
+            int resultCount = em.createQuery("update Member as m SET m.age = 20")
+                    .executeUpdate();
             em.clear();
 
-            Member findMember = em.createNamedQuery("Member.findByName", Member.class)
-                    .setParameter("name", "memberA")
-                    .getSingleResult();
+            System.out.println("resultCount = "+resultCount);
 
-            System.out.println("findMember = "+findMember);
+            List<Member> members = em.createQuery("SELECT m From Member as m", Member.class)
+                    .getResultList();
+            for (Member member : members) {
+                System.out.println(member);
+            }
 
             tx.commit();
         } catch (Exception e) {
