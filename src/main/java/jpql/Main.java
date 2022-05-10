@@ -15,28 +15,42 @@ public class Main {
         tx.begin();
 
         try {
-            Book book = new Book();
-            book.setName("자바 ORM 표준 JPA 프로그래밍");
-            book.setAuthor("kim");
-            book.setPrice(10000);
-            book.setStockAmount(10000);
-            book.setIsbn("9788960777330");
-            em.persist(book);
+            Team teamA = new Team();
+            teamA.setName("teamA");
+            em.persist(teamA);
+
+            Team teamB = new Team();
+            teamB.setName("teamB");
+            em.persist(teamB);
+
+            Member memberA = new Member();
+            memberA.setName("memberA");
+            memberA.changeTeam(teamA);
+            em.persist(memberA);
+
+            Member memberB = new Member();
+            memberB.setName("memberB");
+            memberB.changeTeam(teamB);
+            em.persist(memberB);
 
             em.flush();
             em.clear();
 
-            Product findProduct =
-                    em.createQuery("SELECT p From Product as p " +
-                                    "WHERE treat(p as Book).author = 'kim'", Product.class)
+            Member findMemberA = em.createQuery("SELECT m From Member as m WHERE m = :member", Member.class)
+                    .setParameter("member", memberA)
+                    .getSingleResult();
+            System.out.println("findMemberA = "+findMemberA);
+
+            Member findMemberB = em.createQuery("SELECT m From Member as m WHERE m.team = :team", Member.class)
+                    .setParameter("team", teamB)
                     .getSingleResult();
 
-            System.out.println("findProduct= "+findProduct);
+            System.out.println("findMemberB = "+findMemberB);
 
             tx.commit();
         } catch (Exception e) {
-            e.printStackTrace();
             tx.rollback();
+            e.printStackTrace();
         } finally {
             em.close();
         }
