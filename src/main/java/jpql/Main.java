@@ -4,7 +4,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.util.List;
 
 public class Main {
 
@@ -46,16 +45,11 @@ public class Main {
             em.flush();
             em.clear();
 
-            String jpql = "SELECT distinct t FROM Team as t join fetch t.members";
+            Member findMember = em.createNamedQuery("Member.findByName", Member.class)
+                    .setParameter("name", "memberA")
+                    .getSingleResult();
 
-            List<Team> teams = em.createQuery(jpql, Team.class).getResultList();
-            for (Team team : teams) {
-                List<Member> members = team.getMembers();
-                System.out.printf("team = %s | membersSize = %d명\n", team.getName(), members.size());
-                for (Member member : members) {
-                    System.out.printf("--->  member = %s\n",member);
-                }
-            }
+            System.out.println("findMember = "+findMember);
 
             tx.commit();
         } catch (Exception e) {
